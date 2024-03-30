@@ -2,20 +2,25 @@ SET SERVEROUTPUT ON;
 
 DECLARE
     dividend NUMBER := 60000;
-    divisor NUMBER;
     maxim NUMBER;
+    prevMaxim NUMBER := 1; -- Initialize prevMaxim to 1 before the loop
 BEGIN
     FOR j IN 1..3 LOOP
-        divisor := 1;-- Initialize to 1, the smallest possible divisor
-        maxim:= 0;
+        maxim := 1; -- Initialize maxim to 1 before each inner loop
 
         FOR i IN 1..dividend LOOP
-            divisor:= i;
-            IF MOD(dividend, i) = 0  AND i >= maxim AND i<>dividend THEN
-                maxim:= divisor;
+            IF MOD(dividend, i) = 0 AND i >= maxim AND i < dividend THEN
+                maxim := i;
             END IF;
         END LOOP;
-        dividend:= maxim;
+
+        IF maxim = 1 THEN
+            maxim := prevMaxim; -- Restore prevMaxim if maxim becomes 1
+        ELSE
+            prevMaxim := maxim; -- Update prevMaxim if maxim is not 1
+        END IF;
+        
+        dividend := maxim; -- Update dividend for the next iteration
     END LOOP;
     
     DBMS_OUTPUT.PUT_LINE('Maximum Common Divisor (GCD): ' || maxim);
